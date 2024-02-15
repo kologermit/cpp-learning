@@ -18,20 +18,20 @@ class BigInteger {
 
     public:
         BigInteger(cll);
-        BigInteger(std::string);
+        BigInteger(const std::string);
         BigInteger(const BigInteger&);
         ~BigInteger();
-        BigInteger& operator+(BigInteger&);
-        BigInteger& operator-(BigInteger&);
-        BigInteger& operator&(BigInteger&);
-        BigInteger& operator/(BigInteger&);
-        BigInteger& operator%(BigInteger&);
-        BigInteger& operator+=(BigInteger&);
-        BigInteger& operator-=(BigInteger&);
-        BigInteger& operator&=(BigInteger&);
-        BigInteger& operator/=(BigInteger&);
-        BigInteger& operator%=(BigInteger&);
-        BigInteger& operator=(BigInteger&);
+        BigInteger& operator+(const BigInteger&);
+        BigInteger& operator-(const BigInteger&);
+        BigInteger& operator&(const BigInteger&);
+        BigInteger& operator/(const BigInteger&);
+        BigInteger& operator%(const BigInteger&);
+        BigInteger& operator+=(const BigInteger&);
+        BigInteger& operator-=(const BigInteger&);
+        BigInteger& operator&=(const BigInteger&);
+        BigInteger& operator/=(const BigInteger&);
+        BigInteger& operator%=(const BigInteger&);
+        BigInteger& operator=(const BigInteger&);
         BigInteger& operator+(cll&);
         BigInteger& operator-(cll&);
         BigInteger& operator&(cll&);
@@ -44,5 +44,5 @@ class BigInteger {
         BigInteger& operator%=(cll&);
         BigInteger& operator=(cll&);
         friend std::ostream& operator<<(std::ostream& out, const BigInteger& obj);
-        friend std::istream& operator>>(std::istream& in, BigInteger& obj);
+        friend std::istream& operator>>(std::istream& in, const BigInteger& obj);
 };
