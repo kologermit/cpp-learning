@@ -17,3 +17,12 @@ BigInteger::BigInteger(cll n = 0) {
         n2 /= 10;   
     }
 }
+
+BigInteger::BigInteger(const BigInteger& bi) {
+    this->size = bi.size;
+    this->num = new short[this->size];
+    this->sign = this->sign;
+    for (int i = 0; i < this->size; i++) {
+        this->num[i] = bi.num[i];
+    }
+}
