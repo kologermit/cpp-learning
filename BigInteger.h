@@ -3,17 +3,24 @@
 // превосходящими long long
 
 #include <iostream>
+#define ll long long
+#define cll const ll
 
 class BigInteger {
     private:
         bool sign;
+        // Сигнатура. число положительное или отрицательное
+        // true - положительное, false - отрицательное
         int size;
-        short* number;
+        // Размер числа
+        short* num;
+        // Само число. Хранится ввиде массива цифр
 
     public:
-        BigInteger();
-        BigInteger(const long long n);
+        BigInteger(cll);
         BigInteger(std::string);
+        BigInteger(const BigInteger*);
+        ~BigInteger();
         BigInteger* operator+(BigInteger*);
         BigInteger* operator-(BigInteger*);
         BigInteger* operator*(BigInteger*);
@@ -25,21 +32,17 @@ class BigInteger {
         BigInteger* operator/=(BigInteger*);
         BigInteger* operator%=(BigInteger*);
         BigInteger* operator=(BigInteger*);
-        BigInteger* operator+(const long long*);
-        BigInteger* operator-(const long long*);
-        BigInteger* operator*(const long long*);
-        BigInteger* operator/(const long long*);
-        BigInteger* operator%(const long long*);
-        BigInteger* operator+=(const long long*);
-        BigInteger* operator-=(const long long*);
-        BigInteger* operator*=(const long long*);
-        BigInteger* operator/=(const long long*);
-        BigInteger* operator%=(const long long*);
-        BigInteger* operator=(const long long*);
+        BigInteger* operator+(cll*);
+        BigInteger* operator-(cll*);
+        BigInteger* operator*(cll*);
+        BigInteger* operator/(cll*);
+        BigInteger* operator%(cll*);
+        BigInteger* operator+=(cll*);
+        BigInteger* operator-=(cll*);
+        BigInteger* operator*=(cll*);
+        BigInteger* operator/=(cll*);
+        BigInteger* operator%=(cll*);
+        BigInteger* operator=(cll*);
         friend std::ostream& operator<<(std::ostream& out, const BigInteger& obj);
         friend std::istream& operator>>(std::istream& in, BigInteger& obj);
 };
-
-int main() {
-
-}
