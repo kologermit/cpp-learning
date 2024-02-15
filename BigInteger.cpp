@@ -10,6 +10,12 @@ BigInteger::BigInteger(cll n = 0) {
         n2 /= 10;
         this->size++;
     }
+    if (!this->size) {
+        this->size = 1;
+        this->num = new short[1];
+        this->num[0] = 0;
+        return;
+    }
     this->num = new short[this->size];
     n2 = abs(n);
     for (int i = 0; i < this->size; i++) {
@@ -38,7 +44,9 @@ BigInteger::BigInteger(const std::string s) {
     } else {
         this->sign = true;
         if (s == "0") {
-            this->size = 0;
+            this->size = 1;
+            this->num = new short[1];
+            this->num[0] = 0;
         } else {
             this->size = s.size();
             this->num = new short[this->size];
@@ -47,4 +55,8 @@ BigInteger::BigInteger(const std::string s) {
             }
         }
     }
+}
+
+BigInteger::~BigInteger() {
+    delete this->num;
 }
