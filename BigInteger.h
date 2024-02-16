@@ -18,9 +18,10 @@ class BigInteger {
 
     public:
         BigInteger(cll);
-        BigInteger(const std::string);
+        BigInteger(const std::string&);
         BigInteger(const BigInteger&);
         ~BigInteger();
+        std::string toString();
         BigInteger& operator+(const BigInteger&);
         BigInteger& operator-(const BigInteger&);
         BigInteger& operator&(const BigInteger&);
