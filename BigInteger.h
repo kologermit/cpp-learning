@@ -4,7 +4,6 @@
 
 #include <iostream>
 #define ll long long
-#define cll const ll
 
 class BigInteger {
     private:
@@ -17,33 +16,33 @@ class BigInteger {
         // Само число. Хранится ввиде массива цифр
 
     public:
-        BigInteger(cll);
-        BigInteger(const std::string&);
+        BigInteger(ll);
+        BigInteger(std::string);
         BigInteger(const BigInteger&);
         ~BigInteger();
         std::string toString();
-        BigInteger& operator+(const BigInteger&);
-        BigInteger& operator-(const BigInteger&);
-        BigInteger& operator&(const BigInteger&);
-        BigInteger& operator/(const BigInteger&);
-        BigInteger& operator%(const BigInteger&);
-        BigInteger& operator+=(const BigInteger&);
-        BigInteger& operator-=(const BigInteger&);
-        BigInteger& operator&=(const BigInteger&);
-        BigInteger& operator/=(const BigInteger&);
-        BigInteger& operator%=(const BigInteger&);
+        BigInteger& operator+(BigInteger&);
+        BigInteger& operator-(BigInteger&);
+        BigInteger& operator&(BigInteger&);
+        BigInteger& operator/(BigInteger&);
+        BigInteger& operator%(BigInteger&);
+        BigInteger& operator+=(BigInteger&);
+        BigInteger& operator-=(BigInteger&);
+        BigInteger& operator&=(BigInteger&);
+        BigInteger& operator/=(BigInteger&);
+        BigInteger& operator%=(BigInteger&);
         BigInteger& operator=(const BigInteger&);
-        BigInteger& operator+(cll&);
-        BigInteger& operator-(cll&);
-        BigInteger& operator&(cll&);
-        BigInteger& operator/(cll&);
-        BigInteger& operator%(cll&);
-        BigInteger& operator+=(cll&);
-        BigInteger& operator-=(cll&);
-        BigInteger& operator&=(cll&);
-        BigInteger& operator/=(cll&);
-        BigInteger& operator%=(cll&);
-        BigInteger& operator=(cll&);
-        friend std::ostream& operator<<(std::ostream& out, const BigInteger& obj);
-        friend std::istream& operator>>(std::istream& in, const BigInteger& obj);
+        BigInteger& operator+(ll&);
+        BigInteger& operator-(ll&);
+        BigInteger& operator&(ll&);
+        BigInteger& operator/(ll&);
+        BigInteger& operator%(ll&);
+        BigInteger& operator+=(ll&);
+        BigInteger& operator-=(ll&);
+        BigInteger& operator&=(ll&);
+        BigInteger& operator/=(ll&);
+        BigInteger& operator%=(ll&);
+        BigInteger& operator=(ll&);
+        friend std::ostream& operator<<(std::ostream& out, BigInteger& obj);
+        friend std::istream& operator>>(std::istream& in, BigInteger& obj);
 };

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <cmath>
 
-BigInteger::BigInteger(cll n = 0) {
+BigInteger::BigInteger(ll n = 0) {
     ll n2 = abs(n);
     this->size = 0;
     this->sign = n >= 0;
@@ -33,7 +33,7 @@ BigInteger::BigInteger(const BigInteger& bi) {
     }
 }
 
-BigInteger::BigInteger(const std::string& s) {
+BigInteger::BigInteger(std::string s) {
     if (s == "0") {
         this->sign = true;
         this->size = 1;
@@ -68,11 +68,23 @@ std::string BigInteger::toString() {
     return res;
 }
 
-std::ostream& operator<<(std::ostream& out, const BigInteger& obj) {
-    
-    return out;
+BigInteger& BigInteger::operator=(const BigInteger &bi) {
+    delete this->num;
+    this->size = bi.size;
+    this->num = new short[this->size];
+    this->sign = bi.sign;
+    for (int i = 0; i < this->size; i++) {
+        this->num[i] = bi.num[i];
+    }
 }
 
-std::istream& operator>>(std::istream& in, const BigInteger& obj) {
+std::ostream& operator<<(std::ostream& out, BigInteger& bi) {
+    return out << bi.toString();
+}
 
+std::istream& operator>>(std::istream& in,  BigInteger& obj) {
+    std::string t;
+    in >> t;
+    obj = BigInteger(t);
+    return in;
 }

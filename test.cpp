@@ -2,6 +2,9 @@
 #include "BigInteger.cpp"
 using namespace std;
 int main() {
-    cout << "b=" << BigInteger("-1234").toString() << std::endl;
+    BigInteger bi;
+    cout << "bi: ";
+    cin >> bi;
+    cout << "bi: " << bi << endl;
     return 0;
 }
