@@ -8,3 +8,5 @@ main.ii: main.cpp
 	g++ -E main.cpp -o main.ii
 clean:
 	rm -rf *.o run *.exe *.ii *.s
+run: all
+	./run
