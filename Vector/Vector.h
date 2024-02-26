@@ -1,4 +1,5 @@
-
+#include <cstddef>
+#include <iostream>
 // T имеет:
 // 1) Стандартный конструктор
 // 2) Конструктор копирования
@@ -7,9 +8,10 @@ template<typename T>
 class Vector {
 private:
     T* begin_ptr;
-    T* end_ptr;
-    T* cap_ptr;
-    size_t get_capacity_from_size(const size_t size) const;
+    size_t _size;
+    size_t _cap;
+    size_t get_capacity_from_size(const size_t& size) const;
+    void init(const size_t& size);
 public:
     class OutOfRange {
     public:
@@ -17,27 +19,27 @@ public:
             return "Error: Index out of range";
         }
     };
-    T& operator[](const int& index);
+    const T& operator[](const int& index);
     ~Vector();
-    Vector(const size_t size = 0, const T& val = T());
+    Vector();
+    Vector(const size_t size);
+    Vector(const size_t size, const T& val);
     void push_back(const T& val);
     void pop_back();
     size_t size() const;
-    const T& operator[](const int& idx) const;
+    const T& operator[](const int& index) const;
 
 public:
     // std::random_access_iterator_tag
     class Iterator {
-        // Iterator methods
-    }
-
-    Iterator begin();
-    Iterator end();
+        Iterator begin();
+        Iterator end();
+    };
 
 };
 
 template<typename T>
-size_t Vector<T>::get_capacity_from_size(const size_t size) const {
+size_t Vector<T>::get_capacity_from_size(const size_t& size) const {
     size_t cap = 1;
     while (cap / 2 < size) {
         cap *= 2;
@@ -46,26 +48,47 @@ size_t Vector<T>::get_capacity_from_size(const size_t size) const {
 }
 
 template<typename T>
-size_t Vector<T>::size() const {
-    return this->end_ptr - this->begin_ptr;
+void Vector<T>::init(const size_t& size) {
+    size_t cap = this->get_capacity_from_size(size);
+    this->begin_ptr = new T[cap];
+    this->_size = size;
+    this->_cap = cap;
 }
 
 template<typename T>
-T& Vector<T>::operator[](const int& index) {
-    if (index >= this->size()) {
+size_t Vector<T>::size() const {
+    return this->_size;
+}
+
+template<typename T>
+const T& Vector<T>::operator[](const int& index) {
+    if (index >= this->_size) {
         throw OutOfRange();
     }
     return *(this->begin_ptr + index);
 }
 
 template<typename T>
-Vector<T>::Vector(const size_t size = 0, const T& val = T()) {
-    size_t cap = this->get_capacity_from_size(size);
-    this->begin_ptr = new T[cap];
-    this->end_ptr = this->begin_ptr + size;
-    this->cap_ptr = this->begin_ptr + cap;
+Vector<T>::Vector() {
+    this->init(0);
     for (int i = 0; i < size; ++i) {
-        *this[i] = val;
+        this->begin_ptr[i] = T();
+    }
+}
+
+template<typename T>
+Vector<T>::Vector(const size_t size) {
+    this->init(size);
+    for (int i = 0; i < size; ++i) {
+        this->begin_ptr[i] = T();
+    }
+}
+
+template<typename T>
+Vector<T>::Vector(const size_t size, const T& val) {
+    this->init(size);
+    for (int i = 0; i < size; ++i) {
+        this->begin_ptr[i] = val;
     }
 }
 
