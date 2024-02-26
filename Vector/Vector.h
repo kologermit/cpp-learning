@@ -107,5 +107,18 @@ void Vector<T>::push_back(const T& val) {
         return;
     }
     this->_begin_ptr[this->_size] = val;
-    this->_size++;
+    ++this->_size;
+}
+
+template<typename T>
+void Vector<T>::pop_back() {
+    --this->_size;
+    if (this->_size <= this->_capacity / 4 && this->_capacity >= 4) {
+        T* tmp_ptr = this->_begin_ptr;
+        this->init(this->_size, this->_capacity / 2);
+        for (size_t i = 0; i < this->_size; i++) {
+            this->_begin_ptr[i] = tmp_ptr[i];
+        }
+        delete[] tmp_ptr;
+    }
 }
