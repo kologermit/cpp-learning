@@ -27,7 +27,6 @@ public:
     void push_back(const T& val);
     void pop_back();
     size_t size() const;
-    const T& operator[](const int& index) const;
 
 public:
     // std::random_access_iterator_tag

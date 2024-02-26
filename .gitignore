@@ -2,3 +2,5 @@
 .vscode
 *.o
 run
+*.ii
+*.s
