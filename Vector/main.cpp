@@ -1,4 +1,6 @@
 #include <iostream>
+// #include <vector>
+// #define Vector vector
 #include "Vector.h"
 using namespace std;
 struct A {
@@ -8,7 +10,7 @@ struct A {
         return out << "(" << a.a << " " << a.b << " " << a.c << ")";
     }
     ~A() {
-        cout << "destr" << endl;
+        cout << "destr" << " ";
     }
 };
 int main() {
@@ -24,8 +26,8 @@ int main() {
     cout << "v.capacity: " << v.capacity() << endl;
     cout << "v: "; for (int i = 0; i < v.size(); i++) cout << v[i] << " "; cout << endl;
     for (int i = v.size() - 1; i >= 0; i--) {
-        cout << v[i] << "; size: ";
+        cout << v[i] << "; ";
         v.pop_back();
-        cout << v.size() << " ; cap: " << v.capacity() << endl;
+        cout << "size: " << v.size() << " ; cap: " << v.capacity() << endl;
     }
 }

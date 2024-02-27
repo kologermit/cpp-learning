@@ -31,13 +31,27 @@ public:
     void pop_back();
     size_t size() const;
     size_t capacity() const;
-
-public:
-    // std::random_access_iterator_tag
+    
     class Iterator {
-        Iterator begin();
-        Iterator end();
+        private:
+            Vector<T>* _vector_ptr;
+            size_t _distance;
+            
+        public:
+            Iterator();
+            Iterator(const Iterator& it);
+            ~Iterator();
+            Iterator& operator++();
+            Iterator& operator++(int);
+            Iterator& operator--();
+            Iterator& operator--(int);
+            Iterator operator+(const size_t distance) const;
+            Iterator operator-(const size_t distance) const;
+            size_t operator-(const Iterator& it) const;
+            T& operator*(); 
     };
+    Iterator begin();
+    Iterator end();
 
 };
 
