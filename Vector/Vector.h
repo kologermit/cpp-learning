@@ -1,6 +1,7 @@
 #include <cstddef>
 #include <iostream>
 #include <exception>
+#define VIter Vector<T>::Iterator
 // T имеет:
 // 1) Стандартный конструктор
 // 2) Конструктор копирования
@@ -25,6 +26,7 @@ public:
     T& operator[](const size_t& index);
     ~Vector();
     Vector(const size_t size = 0, const T& val = T());
+    Vector(const Vector& vec);
     void push_back(const T& val);
     template<typename... Args>
     void emplace_back(Args&&... args);
@@ -40,16 +42,25 @@ public:
         public:
             Iterator();
             Iterator(const Iterator& it);
-            ~Iterator();
             Iterator& operator++();
-            Iterator& operator++(int);
+            Iterator operator++(int);
             Iterator& operator--();
-            Iterator& operator--(int);
+            Iterator operator--(int);
+            bool operator==(const Iterator& it) const;
+            bool operator!=(const Iterator& it) const;
+            bool operator>(const Iterator& it) const;
+            bool operator>=(const Iterator& it) const;
+            bool operator<(const Iterator& it) const;
+            bool operator<=(const Iterator& it) const;
+            Iterator& operator+=(const size_t distance);
+            Iterator& operator-=(const size_t distance);
             Iterator operator+(const size_t distance) const;
             Iterator operator-(const size_t distance) const;
             size_t operator-(const Iterator& it) const;
             T& operator*(); 
+            friend class Vector;
     };
+    friend class Iterator;
     Iterator begin();
     Iterator end();
 
@@ -117,6 +128,14 @@ Vector<T>::Vector(const size_t size, const T& val) {
 }
 
 template<typename T>
+Vector<T>::Vector(const Vector<T>& vec) {
+    this->init(vec._size);
+    for (size_t i = 0; i < vec._size; ++i) {
+        this->_begin_ptr[i] = vec._begin_ptr[i];
+    }
+}
+
+template<typename T>
 Vector<T>::~Vector() {
     delete[] this->_begin_ptr;    
 }
@@ -156,3 +175,115 @@ void Vector<T>::pop_back() {
         delete[] tmp_ptr;
     }
 }
+
+template<typename T>
+VIter::Iterator(): _vector_ptr(0), _distance(0) {};
+
+template<typename T>
+VIter::Iterator(const VIter& it): _vector_ptr(it._vector_ptr), _distance(it._distance) {};
+
+template<typename T>
+typename VIter& VIter::operator++() {
+    ++this->_distance;
+    return *this;
+}
+
+template<typename T>
+typename VIter VIter::operator++(int) {
+    VIter temp = *this;
+    ++(*this);
+    return temp;
+}
+
+template<typename T>
+typename VIter& VIter::operator--() {
+    --this->_distance;
+    return *this;
+}
+
+template<typename T>
+typename VIter VIter::operator--(int) {
+    VIter temp = *this;
+    --this->_distance;
+    return temp;
+}
+
+template<typename T>
+typename VIter& VIter::operator+=(const size_t distance) {
+    this->_distance += distance;
+    return *this;
+}
+
+template<typename T>
+typename VIter& VIter::operator-=(const size_t distance) {
+    this->_distance -= distance;
+    return *this;
+}
+
+template<typename T>
+typename VIter VIter::operator+(const size_t distance) const {
+    VIter res = *this;
+    return res += distance;
+}
+
+template<typename T>
+typename VIter VIter::operator-(const size_t distance) const {
+    VIter res = *this;
+    return res -= distance;
+}
+
+template<typename T>
+size_t VIter::operator-(const VIter& it) const {
+    return this->_distance - it._distance;
+}
+
+template<typename T>
+T& VIter::operator*() {
+    return this->_vector_ptr->operator[](this->_distance);
+}
+
+template<typename T>
+typename VIter Vector<T>::begin() {
+    VIter res;
+    res._vector_ptr = this;
+    res._distance = 0;
+    return res;
+};
+
+template<typename T>
+typename VIter Vector<T>::end() {
+    VIter res;
+    res._vector_ptr = this;
+    res._distance = this->_size;
+    return res;
+};
+
+template<typename T>
+bool VIter::operator==(const VIter& it) const {
+    return (this->_vector_ptr == it._vector_ptr) && (this->_distance == it._distance);
+};
+
+template<typename T>
+bool VIter::operator!=(const VIter& it) const {
+    return !(*this == it);
+};
+
+template<typename T>
+bool VIter::operator>(const VIter& it) const {
+    return this->_distance > it._distance && this->_vector_ptr == it._vector_ptr;
+};
+
+template<typename T>
+bool VIter::operator>=(const VIter& it) const {
+    return this->_distance >= it._distance && this->_vector_ptr == it._vector_ptr;
+};
+
+template<typename T>
+bool VIter::operator<(const VIter& it) const {
+    return this->_distance < it._distance && this->_vector_ptr == it._vector_ptr;
+};
+
+template<typename T>
+bool VIter::operator<=(const VIter& it) const {
+    return this->_distance <= it._distance && this->_vector_ptr == it._vector_ptr;
+};
