@@ -86,8 +86,8 @@ void Vector<T>::init(const size_t& size, const size_t& cap) {
 template<typename T>
 void Vector<T>::double_memory() {
     T* tmp_ptr = this->_begin_ptr;
-    this->init(this->_size + 1, this->_capacity * 2);
-    for (size_t i = 0; i < this->_size - 1; ++i) {
+    this->init(this->_size, this->_capacity * 2);
+    for (size_t i = 0; i < this->_size; ++i) {
         this->_begin_ptr[i] = tmp_ptr[i];
     }
     delete[] tmp_ptr;
@@ -142,10 +142,8 @@ Vector<T>::~Vector() {
 
 template<typename T>
 void Vector<T>::push_back(const T& val) {
-    if (this->_size + 1 == this->_capacity) {
+    if (this->_size + 1 >= this->_capacity) {
         this->double_memory();
-        this->_begin_ptr[this->_size - 1] = val;
-        return;
     }
     this->_begin_ptr[this->_size] = val;
     ++this->_size;
@@ -154,10 +152,8 @@ void Vector<T>::push_back(const T& val) {
 template<typename T>
 template<typename... Args>
 void Vector<T>::emplace_back(Args&&... args) {
-    if (this->_size + 1 == this->_capacity) {
+    if (this->_size + 1 >= this->_capacity) {
         this->double_memory();
-        this->_begin_ptr[this->_size - 1] = T(args...);
-        return;
     }
     this->_begin_ptr[this->_size] = T(args...);
     ++this->_size;
@@ -165,6 +161,9 @@ void Vector<T>::emplace_back(Args&&... args) {
 
 template<typename T>
 void Vector<T>::pop_back() {
+    if (this->_size <= 0) {
+        return;
+    }
     --this->_size;
     if (this->_size <= this->_capacity / 4 && this->_capacity >= 4) {
         T* tmp_ptr = this->_begin_ptr;
