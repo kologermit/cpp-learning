@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 // #include <vector>
 // #define Vector vector
 #include "Vector.h"
@@ -34,7 +35,19 @@ int main() {
     for (int i = 0; i < v2.size(); i++) {
         v2[i] = i;
     }
+    cout << "Iterator output: ";
     for (Vector<int>::Iterator it = v2.begin(); it != v2.end(); ++it) {
-        cout << *it << endl;
+        cout << *it << " ";
     }
+    cout << endl;
+    cout << "Auto output: ";
+    for (auto &number : v2) {
+        cout << number << " ";
+    } 
+    cout << endl;
+    cout << "for-each output: ";
+    for_each (v2.begin(), v2.end(), [](int number){
+        cout << number << " ";
+    });
+    cout << endl;
 }

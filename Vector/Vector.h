@@ -199,7 +199,7 @@ typename Vector<T>::Iterator& Vector<T>::Iterator::operator--() {
 template<typename T>
 typename Vector<T>::Iterator Vector<T>::Iterator::operator--(int) {
     Vector<T>::Iterator temp = *this;
-    --this->_distance;
+    --(*this);
     return temp;
 }
 
