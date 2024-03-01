@@ -1,4 +1,6 @@
-all: clean main.o
+all: run
+	./run
+run: clean main.o
 	g++ main.o -o run
 main.o: main.s
 	g++ -c main.s -o main.o
@@ -8,5 +10,9 @@ main.ii: main.cpp
 	g++ -E main.cpp -o main.ii
 clean:
 	rm -rf *.o run *.exe *.ii *.s
-run: all
-	./run
+
+
+test:
+	rm -rf test_run test.exe
+	g++ -o test_run test.cpp
+	./test_run

@@ -1,7 +1,7 @@
 #include <cstddef>
 #include <iostream>
 #include <exception>
-#define VIter Vector<T>::Iterator
+#include <iterator>
 // T имеет:
 // 1) Стандартный конструктор
 // 2) Конструктор копирования
@@ -13,7 +13,7 @@ private:
     size_t _size;
     size_t _capacity;
     static size_t get_capacity_from_size(const size_t& size);
-    void init(const size_t& size, const size_t& cap = -1);
+    void init(const size_t& size, const size_t& cap = 0);
     void double_memory();
 public:
     class OutOfRangeException: public std::exception {
@@ -34,14 +34,15 @@ public:
     size_t size() const;
     size_t capacity() const;
     
-    class Iterator {
+    class Iterator: public std::iterator<std::random_access_iterator_tag, T> {
         private:
             Vector<T>* _vector_ptr;
             size_t _distance;
-            
+            Iterator(Vector<T>* vector_ptr, const size_t distance): _vector_ptr(vector_ptr), _distance(distance) {};
+            static Iterator* buff;
         public:
-            Iterator();
-            Iterator(const Iterator& it);
+            Iterator(): _vector_ptr(nullptr), _distance(0) {};
+            Iterator(const Iterator& it): _vector_ptr(it._vector_ptr), _distance(it._distance) {};
             Iterator& operator++();
             Iterator operator++(int);
             Iterator& operator--();
@@ -56,11 +57,14 @@ public:
             Iterator& operator-=(const size_t distance);
             Iterator operator+(const size_t distance) const;
             Iterator operator-(const size_t distance) const;
-            size_t operator-(const Iterator& it) const;
+            T& operator[](const size_t distance);
+            T* operator->();
+            std::ptrdiff_t operator-(const Iterator& it) const;
+
             T& operator*(); 
-            friend class Vector;
+            friend class Vector<T>;
     };
-    friend class Iterator;
+    friend class Vector<T>::Iterator;
     Iterator begin();
     Iterator end();
 
@@ -77,7 +81,7 @@ size_t Vector<T>::get_capacity_from_size(const size_t& size) {
 
 template<typename T>
 void Vector<T>::init(const size_t& size, const size_t& cap) {
-    size_t capacity = cap == -1 ? this->get_capacity_from_size(size) : cap;
+    size_t capacity = cap == 0 ? this->get_capacity_from_size(size) : cap;
     this->_begin_ptr = new T[capacity];
     this->_size = size;
     this->_capacity = capacity;
@@ -105,7 +109,7 @@ size_t Vector<T>::capacity() const {
 
 template<typename T>
 const T& Vector<T>::operator[](const size_t& index) const {
-    if (index >= this->_size || index < 0) {
+    if (index >= this->_size) {
         throw OutOfRangeException();
     }
     return this->_begin_ptr[index];
@@ -155,7 +159,7 @@ void Vector<T>::emplace_back(Args&&... args) {
     if (this->_size + 1 >= this->_capacity) {
         this->double_memory();
     }
-    this->_begin_ptr[this->_size] = T(args...);
+    new (this->_begin_ptr + this->_size) T(args...);
     ++this->_size;
 }
 
@@ -176,113 +180,119 @@ void Vector<T>::pop_back() {
 }
 
 template<typename T>
-VIter::Iterator(): _vector_ptr(0), _distance(0) {};
-
-template<typename T>
-VIter::Iterator(const VIter& it): _vector_ptr(it._vector_ptr), _distance(it._distance) {};
-
-template<typename T>
-typename VIter& VIter::operator++() {
+typename Vector<T>::Iterator& Vector<T>::Iterator::operator++() {
     ++this->_distance;
     return *this;
 }
 
 template<typename T>
-typename VIter VIter::operator++(int) {
-    VIter temp = *this;
+typename Vector<T>::Iterator Vector<T>::Iterator::operator++(int) {
+    Vector<T>::Iterator temp = *this;
     ++(*this);
     return temp;
 }
 
 template<typename T>
-typename VIter& VIter::operator--() {
+typename Vector<T>::Iterator& Vector<T>::Iterator::operator--() {
     --this->_distance;
     return *this;
 }
 
 template<typename T>
-typename VIter VIter::operator--(int) {
-    VIter temp = *this;
+typename Vector<T>::Iterator Vector<T>::Iterator::operator--(int) {
+    Vector<T>::Iterator temp = *this;
     --this->_distance;
     return temp;
 }
 
 template<typename T>
-typename VIter& VIter::operator+=(const size_t distance) {
-    this->_distance += distance;
+typename Vector<T>::Iterator& Vector<T>::Iterator::operator+=(const size_t distance) {
+    if ((long long)(this->_distance) + distance > this->_vector_ptr->_size) {
+        this->_distance = this->_vector_ptr->_size;
+    } else {
+        this->_distance += distance;
+    }
     return *this;
 }
 
 template<typename T>
-typename VIter& VIter::operator-=(const size_t distance) {
-    this->_distance -= distance;
+typename Vector<T>::Iterator& Vector<T>::Iterator::operator-=(const size_t distance) {
+    if ((long long)(this->_distance) - distance < 0) {
+        this->_distance = 0;
+    } else {
+        this->_distance -= distance;
+    }
     return *this;
 }
 
 template<typename T>
-typename VIter VIter::operator+(const size_t distance) const {
-    VIter res = *this;
+typename Vector<T>::Iterator Vector<T>::Iterator::operator+(const size_t distance) const {
+    Vector<T>::Iterator res = *this;
     return res += distance;
 }
 
 template<typename T>
-typename VIter VIter::operator-(const size_t distance) const {
-    VIter res = *this;
+typename Vector<T>::Iterator Vector<T>::Iterator::operator-(const size_t distance) const {
+    Vector<T>::Iterator res = *this;
     return res -= distance;
 }
 
 template<typename T>
-size_t VIter::operator-(const VIter& it) const {
-    return this->_distance - it._distance;
+std::ptrdiff_t Vector<T>::Iterator::operator-(const Vector<T>::Iterator& it) const {
+    return (long long)(this->_distance) - (long long)(it._distance);
 }
 
 template<typename T>
-T& VIter::operator*() {
+T& Vector<T>::Iterator::operator*() {
     return this->_vector_ptr->operator[](this->_distance);
 }
 
 template<typename T>
-typename VIter Vector<T>::begin() {
-    VIter res;
-    res._vector_ptr = this;
-    res._distance = 0;
-    return res;
+typename Vector<T>::Iterator Vector<T>::begin() {
+    return Vector<T>::Iterator(this, 0);
 };
 
 template<typename T>
-typename VIter Vector<T>::end() {
-    VIter res;
-    res._vector_ptr = this;
-    res._distance = this->_size;
-    return res;
+typename Vector<T>::Iterator Vector<T>::end() {
+    return Vector<T>::Iterator(this, this->_size);
 };
 
 template<typename T>
-bool VIter::operator==(const VIter& it) const {
+bool Vector<T>::Iterator::operator==(const Vector<T>::Iterator& it) const {
     return (this->_vector_ptr == it._vector_ptr) && (this->_distance == it._distance);
 };
 
 template<typename T>
-bool VIter::operator!=(const VIter& it) const {
+bool Vector<T>::Iterator::operator!=(const Vector<T>::Iterator& it) const {
     return !(*this == it);
 };
 
 template<typename T>
-bool VIter::operator>(const VIter& it) const {
+bool Vector<T>::Iterator::operator>(const Vector<T>::Iterator& it) const {
     return this->_distance > it._distance && this->_vector_ptr == it._vector_ptr;
 };
 
 template<typename T>
-bool VIter::operator>=(const VIter& it) const {
+bool Vector<T>::Iterator::operator>=(const Vector<T>::Iterator& it) const {
     return this->_distance >= it._distance && this->_vector_ptr == it._vector_ptr;
 };
 
 template<typename T>
-bool VIter::operator<(const VIter& it) const {
+bool Vector<T>::Iterator::operator<(const Vector<T>::Iterator& it) const {
     return this->_distance < it._distance && this->_vector_ptr == it._vector_ptr;
 };
 
 template<typename T>
-bool VIter::operator<=(const VIter& it) const {
+bool Vector<T>::Iterator::operator<=(const Vector<T>::Iterator& it) const {
     return this->_distance <= it._distance && this->_vector_ptr == it._vector_ptr;
+};
+
+template<typename T>
+T& Vector<T>::Iterator::operator[](const size_t distance) {
+    return this->_vector_ptr->operator[](distance);
+};
+
+template<typename T>
+T* Vector<T>::Iterator::operator->() {
+    return this->_vector_ptr->_begin_ptr + this->_distance;
 };

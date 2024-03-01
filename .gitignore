@@ -5,3 +5,5 @@ run
 *.ii
 *.s
 test.cpp
+test
+test_run
