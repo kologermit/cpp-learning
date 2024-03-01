@@ -181,8 +181,7 @@ void Vector<T>::pop_back() {
 
 template<typename T>
 typename Vector<T>::Iterator& Vector<T>::Iterator::operator++() {
-    ++this->_distance;
-    return *this;
+    return this->operator+=(1);
 }
 
 template<typename T>
@@ -194,8 +193,7 @@ typename Vector<T>::Iterator Vector<T>::Iterator::operator++(int) {
 
 template<typename T>
 typename Vector<T>::Iterator& Vector<T>::Iterator::operator--() {
-    --this->_distance;
-    return *this;
+    return this->operator-=(1);
 }
 
 template<typename T>
@@ -207,20 +205,18 @@ typename Vector<T>::Iterator Vector<T>::Iterator::operator--(int) {
 
 template<typename T>
 typename Vector<T>::Iterator& Vector<T>::Iterator::operator+=(const size_t distance) {
-    if ((long long)(this->_distance) + distance > this->_vector_ptr->_size) {
+    this->_distance += distance;
+    if (this->_distance > this->_vector_ptr->_size) {
         this->_distance = this->_vector_ptr->_size;
-    } else {
-        this->_distance += distance;
     }
     return *this;
 }
 
 template<typename T>
 typename Vector<T>::Iterator& Vector<T>::Iterator::operator-=(const size_t distance) {
-    if ((long long)(this->_distance) - distance < 0) {
-        this->_distance = 0;
-    } else {
-        this->_distance -= distance;
+    this->_distance -= distance;
+    if (this->_distance > this->_vector_ptr->_size) {
+        this->_distance = this->_vector_ptr->_size;
     }
     return *this;
 }
