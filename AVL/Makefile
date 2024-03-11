@@ -1,3 +1,5 @@
+all: clean build
+	./run
 run: clean build
 	./run
 build:
