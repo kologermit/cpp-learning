@@ -122,6 +122,7 @@ void AVLTree<KeyType, CompareType>::erase(const KeyType& key, std::shared_ptr<No
         this->erase(key, node->_right);
         return;
     }
+    --this->_size;
     if (!node->_left && !node->_right) {
         node.reset();
         return;
