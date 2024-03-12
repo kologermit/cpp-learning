@@ -64,8 +64,8 @@ void AVLTree<KeyType, CompareType>::print(std::ostream& out, const std::shared_p
     }
     out 
         << "key: " << node->_key << "; left: " 
-        << (node->_left ? node->_left->_key : 0) << "; right: " 
-        << (node->_right ? node->_right->_key : -0) << "; height: "
+        << (node->_left ? node->_left->_key : -999) << "; right: " 
+        << (node->_right ? node->_right->_key : -999) << "; height: "
         << node->_height << std::endl;
     print(out, node->_left);
     print(out, node->_right);
@@ -98,9 +98,6 @@ void AVLTree<KeyType, CompareType>::insert(const KeyType& key, std::shared_ptr<N
 
 template<typename KeyType, typename CompareType>
 std::shared_ptr<typename AVLTree<KeyType, CompareType>::Node>& AVLTree<KeyType, CompareType>::extract_max(std::shared_ptr<Node>& node) {
-    if (!node) {
-        return node;
-    }
     if (!node->_right) {
         return node;
     }
@@ -137,10 +134,13 @@ void AVLTree<KeyType, CompareType>::erase(const KeyType& key, std::shared_ptr<No
         node = node->_left;
         return;
     }
-    std::shared_ptr _max = this->extract_max(node->_left);
-    _max->_right = node->_right;
-    _max->_left = node->_left;
-    node = _max;
+    std::shared_ptr<Node>* _max = &this->extract_max(node->_left);
+    node->_key = (*_max)->_key;
+    if ((*_max)->_left) {
+        (*_max) = (*_max)->_left;
+    } else {
+        _max->reset();
+    }
 }
 
 template<typename KeyType, typename CompareType>
