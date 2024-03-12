@@ -3,11 +3,13 @@
 using namespace std;
 int main() {
     AVLTree<int> tree;
-    for (int i = 0; i < 10; i++) {
-        tree.insert((i % 2 ? -i : i));
-    }
-    cout << "size: " << tree.size() << endl;
-    cout << "height: " << tree.height() << endl;
-    AVLTree<int>::Node::update_height(tree._root);
-    AVLTree<int>::Node::print(tree._root);
+    tree.insert(1);
+    tree.insert(-1);
+    tree.insert(0);
+    tree.insert(-2);
+    tree.insert(3);
+    tree.insert(2);
+    tree.insert(4);
+    tree.erase(1);
+    tree.print();
 }
