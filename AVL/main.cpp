@@ -5,12 +5,10 @@
 using namespace std;
 int main() {
     AVLTree<int> tree;
-    ofstream out("test");
-    vector<int> v = {0, -3, -1, -2, 3};
+    vector<int> v = {0, -4, 4, -6, -2, 2, 6, -7, -5, -3, 1, 3, 5, 7};
     for (int i = 0; i < v.size(); i++) {
         tree.insert(v[i]);
     }
-    // cout << tree.extract_max(tree._root->_left)->_key << endl;
-    tree.erase(-1);
+    tree.erase(-4);
     tree.print();
 }

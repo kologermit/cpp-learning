@@ -127,6 +127,8 @@ std::shared_ptr<typename AVLTree<KeyType, CompareType>::Node> AVLTree<KeyType, C
         std::shared_ptr<Node> ret = node;
         if (node->_left) {
             node = node->_left;
+        } else {
+            node.reset();
         }
         update_height(node);
         return ret;
