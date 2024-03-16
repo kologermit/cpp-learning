@@ -4,14 +4,15 @@
 using namespace std;
 int main() {
     AVLTree<int> tree;
-    for (int i = 1; i <= 2000; i++) {
-        tree.insert(i);
+    vector<int> v = {3, 1, 7, 0, 2, 5, 8};
+    for (int i = 0; i < v.size(); i++) {
+        tree.insert(v[i]);
     }
-    int count = 0;
-    for (int i = 1; i <= 1000; i++) {
-        count += tree.find(i);
-        tree.erase(i);
-    }
+    tree.erase(3);
+    tree.erase(2);
+    tree.erase(1);
     tree.print(-999);
-    cout << count << endl;
+    // for (int i = 0; i < v.size(); ++i, ++it) {
+    //     cout << i << ". " << *it << endl;
+    // }
 }
