@@ -7,5 +7,5 @@ build:
 clean:
 	rm -rf *.exe run test
 test: clean
-	g++ test.cpp -o test
+	g++ -Wall -Wno-warning -Wno-notes test.cpp -o test
 	./test

@@ -52,21 +52,18 @@ public:
     void for_each(const std::function<void(const KeyType&)>& func) const;
     class Iterator {
         private:
-            bool _is_end;
-            std::shared_ptr<Node> _begin;
-            std::shared_ptr<Node> _end;
-            std::shared_ptr<Node> _current;
-            explicit Iterator(bool is_end=true): _is_end(is_end) {};
+            std::weak_ptr<Node> _current;
+            explicit Iterator(std::weak_ptr<Node> current): _current(current) {};
             void next();
             void back();
         public:
             Iterator() {};
             Iterator& operator++();
-            Iterator& operator++(int);
+            Iterator operator++(int);
             Iterator& operator--();
-            Iterator& operator--(int);
-            Iterator& operator==(const Iterator&) const;
-            Iterator& operator!=(const Iterator&) const;
+            Iterator operator--(int);
+            bool operator==(const Iterator&) const;
+            bool operator!=(const Iterator&) const;
             const KeyType& operator*();
             friend class AVLTree;
     };
@@ -114,13 +111,13 @@ void AVLTree<KeyType, CompareType>::print(const KeyType& none, std::ostream& out
     if (!node) {
         return;
     }
+    print(none, out, node->_left);
     out 
         << "k: " << node->_key << "; l: " 
         << (node->_left ? node->_left->_key : none) << "; r: " 
         << (node->_right ? node->_right->_key : none) << "; p: "
         << (node->_parent ? node->_parent->_key : none) << "; h: " 
         << node->_height << std::endl;
-    print(none, out, node->_left);
     print(none, out, node->_right);
 }
 
@@ -279,7 +276,6 @@ void AVLTree<KeyType, CompareType>::rotate(std::shared_ptr<Node>& node) {
     if (abs(diff(node)) <= 1) {
         return;
     }
-    std::cout << "kk1" << std::endl;
     if (node->_right) {
         int diff_a = diff(node), diff_b = diff(node->_right), diff_c;
         if (diff_a == -2) {
@@ -311,4 +307,134 @@ void AVLTree<KeyType, CompareType>::rotate(std::shared_ptr<Node>& node) {
 template<typename KeyType, typename CompareType>
 void AVLTree<KeyType, CompareType>::erase(const KeyType& key) {
     this->erase(key, this->_root);
+}
+
+template<typename KeyType, typename CompareType>
+typename AVLTree<KeyType, CompareType>::Iterator AVLTree<KeyType, CompareType>::begin() {
+    std::shared_ptr<Node> _begin = this->_root;
+    while (_begin->_left) {
+        _begin = _begin->_left;
+    }
+    return Iterator(_begin);
+}
+
+template<typename KeyType, typename CompareType>
+typename AVLTree<KeyType, CompareType>::Iterator AVLTree<KeyType, CompareType>::end() {
+    return Iterator();
+}
+
+template<typename KeyType, typename CompareType>
+void AVLTree<KeyType, CompareType>::Iterator::next() {
+    if (this->_current.expired()) {
+        return;
+    }
+    std::shared_ptr<Node> current = this->_current.lock();
+    if (!current) {
+        return;
+    }
+    if (current->_right) {
+        current = current->_right;
+        while (current->_left) {
+            current = current->_left;
+        }
+    } else {
+        std::shared_ptr<Node> parent = current->_parent;
+        if (!parent) {
+            this->_current = parent;
+            return;
+        }
+        while (current == parent->_right) {
+            current = parent;
+            if (!current->_parent) {
+                this->_current = current->_parent;
+                return;
+            }
+            parent = current->_parent;
+        }
+        if (current->_right != parent) {
+            current = parent;
+        }
+    }
+    this->_current = current;
+}
+
+template<typename KeyType, typename CompareType>
+void AVLTree<KeyType, CompareType>::Iterator::back() {
+    if (this->_current.expired()) {
+        return;
+    }
+    std::shared_ptr<Node> current = this->_current.lock();
+    if (!current) {
+        return;
+    }
+    if (current->_left) {
+        current = current->_left;
+        while (current->_right) {
+            current = current->_right;
+        }
+    } else {
+        std::shared_ptr<Node> parent = current->_parent;
+        if (!parent) {
+            this->_current = parent;
+            return;
+        }
+        while (current == parent->_left) {
+            current = parent;
+            if (!current->_parent) {
+                this->_current = current->_parent;
+                return;
+            }
+            parent = current->_parent;
+        }
+        if (current->_left != parent) {
+            current = parent;
+        }
+    }
+    this->_current = current;
+}
+
+template<typename KeyType, typename CompareType>
+typename AVLTree<KeyType, CompareType>::Iterator& AVLTree<KeyType, CompareType>::Iterator::operator++() {
+    this->next();
+    return *this;
+}
+
+template<typename KeyType, typename CompareType>
+typename AVLTree<KeyType, CompareType>::Iterator AVLTree<KeyType, CompareType>::Iterator::operator++(int) {
+    Iterator ret = *this;
+    this->next();
+    return ret;
+}
+
+template<typename KeyType, typename CompareType>
+typename AVLTree<KeyType, CompareType>::Iterator& AVLTree<KeyType, CompareType>::Iterator::operator--() {
+    this->back();
+    return *this;
+}
+
+template<typename KeyType, typename CompareType>
+typename AVLTree<KeyType, CompareType>::Iterator AVLTree<KeyType, CompareType>::Iterator::operator--(int) {
+    Iterator ret = *this;
+    this->back();
+    return ret;
+}
+
+template<typename KeyType, typename CompareType>
+const KeyType& AVLTree<KeyType, CompareType>::Iterator::operator*() {
+    if (!this->_current.expired()) {
+        return this->_current.lock()->_key;
+    }
+    return *(new KeyType);
+}
+
+template<typename KeyType, typename CompareType>
+bool AVLTree<KeyType, CompareType>::Iterator::operator==(const Iterator& it) const {
+    std::shared_ptr<Node> first = this->_current.lock();
+    std::shared_ptr<Node> second = it._current.lock();
+    return first == second;
+}
+
+template<typename KeyType, typename CompareType>
+bool AVLTree<KeyType, CompareType>::Iterator::operator!=(const Iterator& it) const {
+    return !this->operator==(it);
 }
