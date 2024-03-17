@@ -4,13 +4,13 @@
 #include <algorithm>
 #include "AVL.h"
 using namespace std;
+
 int main() {
     AVLTree<int> tree;
     int count = 100;
     for (int i = 0; i < count; i++) {
         tree.insert(i);
     }
-    tree.print(-999);
     cout << "1. size: " << tree.size() << endl;
     for (int i = 0; i < count / 2; i++) {
         tree.find(i);
