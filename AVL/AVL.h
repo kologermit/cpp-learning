@@ -6,12 +6,15 @@
 template<typename KeyType, typename CompareType = std::less<KeyType> >
 class AVLTree {
 private:
+    struct Node;
+    typedef std::shared_ptr<Node> NodePtr;
+    typedef std::weak_ptr<Node> NodeWPtr;
     struct Node {
         KeyType _key;
         size_t _height = 0;
-        std::weak_ptr<Node> _parent;
-        std::shared_ptr<Node> _left;
-        std::shared_ptr<Node> _right;
+        NodeWPtr _parent;
+        NodePtr _left;
+        NodePtr _right;
         Node(
             const KeyType& key, 
             const size_t height = 0,
@@ -23,8 +26,6 @@ private:
             _left(nullptr),
             _right(nullptr) {};
     };
-    typedef std::shared_ptr<Node> NodePtr;
-    typedef std::weak_ptr<Node> NodeWPtr;
 private:
     CompareType _less_cmp;
     NodePtr _root = nullptr;
@@ -55,7 +56,7 @@ public:
     class Iterator: public std::iterator<std::bidirectional_iterator_tag, KeyType> {
         private:
             NodeWPtr _current;
-            explicit Iterator(NodeWPtr current): _current(current) {};
+            explicit Iterator(NodePtr current): _current(current) {};
             void next();
             void back();
         public:
@@ -458,10 +459,10 @@ typename AVLTree<KeyType, CompareType>::NodePtr AVLTree<KeyType, CompareType>::f
         return node;
     }
     if (_less_cmp(key, node->_key)) {
-        return find(node->_left, key);
+        return find(key, node->_left);
     }
     if (_less_cmp(node->_key, key)) {
-        return find(node->_right, key);
+        return find(key, node->_right);
     }
     return node;
 }
