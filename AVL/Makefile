@@ -3,9 +3,11 @@ all: clean build
 run: clean build
 	./run
 build:
-	g++ main.cpp -o ./run
+	g++ -Wall -g main.cpp -o ./run
 clean:
 	rm -rf *.exe run test
 test: clean
-	g++ -Wall -Wno-warning -Wno-notes test.cpp -o test
+	g++ -Wall -g test.cpp -o test
 	./test
+valgrind: build
+	valgrind --leak-check=yes --log-file="./valgrind.txt" ./run > ./result.txt

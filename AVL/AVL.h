@@ -13,23 +13,23 @@ private:
         std::shared_ptr<Node> _parent = nullptr;
         std::shared_ptr<Node> _left = nullptr;
         std::shared_ptr<Node> _right = nullptr;
-        explicit Node(
+        Node(
             const KeyType& key, 
             const size_t height = 0,
             std::shared_ptr<Node> parent = nullptr,
-            std::shared_ptr<Node> right = nullptr,
-            std::shared_ptr<Node> left = nullptr
+            std::shared_ptr<Node> left = nullptr,
+            std::shared_ptr<Node> right = nullptr
         ): 
             _key(key),
             _height(height),
             _parent(parent),
-            _right(right),
-            _left(left) {};
+            _left(right),
+            _right(left) {};
     };
     size_t _size = 0;
     CompareType _less_cmp;
     void update_height(const std::shared_ptr<Node>& node);
-    void insert(const KeyType& key, std::shared_ptr<Node>& node, std::shared_ptr<Node> parent);
+    void insert(const KeyType& key, std::shared_ptr<Node>& node, std::shared_ptr<Node>& parent);
     bool find(const KeyType& key, const std::shared_ptr<Node>& node) const;
     void _for_each(const std::function<void(const KeyType&)>& func, const std::shared_ptr<Node>& node) const;
     void print(const KeyType& none, std::ostream& out, const std::shared_ptr<Node>& node);
@@ -42,8 +42,10 @@ private:
     void big_right_rotate(std::shared_ptr<Node>& node);
     static int diff(std::shared_ptr<Node>& node);
     void rotate(std::shared_ptr<Node>& node);
+    void destruct(std::shared_ptr<Node>& node);
 public:
     explicit AVLTree(CompareType less_cmp = CompareType()): _less_cmp(less_cmp), _root(nullptr)  {};
+    ~AVLTree();
     void insert(const KeyType& key);
     void erase(const KeyType& value);
     bool find(const KeyType& key) const;
@@ -70,6 +72,25 @@ public:
     Iterator begin();
     Iterator end();
 };
+
+template<typename KeyType, typename CompareType>
+void AVLTree<KeyType, CompareType>::destruct(std::shared_ptr<Node>& node) {
+    if (!node) {
+        return;
+    }
+    if (node->_right) {
+        this->destruct(node->_right);
+    }
+    if (node->_left) {
+        this->destruct(node->_left);
+    }
+    node.reset();
+}
+
+template<typename KeyType, typename CompareType>
+AVLTree<KeyType, CompareType>::~AVLTree() {
+    this->destruct(this->_root);
+}
 
 template<typename KeyType, typename CompareType>
 void AVLTree<KeyType, CompareType>::update_height(const std::shared_ptr<Node>& node) {
@@ -142,7 +163,7 @@ void AVLTree<KeyType, CompareType>::for_each(const std::function<void(const KeyT
 }
 
 template<typename KeyType, typename CompareType>
-void AVLTree<KeyType, CompareType>::insert(const KeyType& key, std::shared_ptr<Node>& node, std::shared_ptr<Node> parent) {
+void AVLTree<KeyType, CompareType>::insert(const KeyType& key, std::shared_ptr<Node>& node, std::shared_ptr<Node>& parent) {
     if (!node) {
         node = std::shared_ptr<Node>(new Node(key, 1, parent));
         ++this->_size;
@@ -178,7 +199,7 @@ std::shared_ptr<typename AVLTree<KeyType, CompareType>::Node> AVLTree<KeyType, C
 
 template<typename KeyType, typename CompareType>
 void AVLTree<KeyType, CompareType>::insert(const KeyType& key) {
-    this->insert(key, this->_root, nullptr);
+    this->insert(key, this->_root, this->_root);
 }
 
 template<typename KeyType, typename CompareType>

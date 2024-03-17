@@ -7,3 +7,5 @@ run
 test.cpp
 test
 test_run
+result.txt
+valgrind.txt
