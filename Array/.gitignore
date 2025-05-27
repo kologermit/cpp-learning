@@ -1,0 +1,5 @@
+*
+!.gitignore
+!Array.h
+!main.cpp
+!Makefile

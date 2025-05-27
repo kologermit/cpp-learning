@@ -1,0 +1,6 @@
+*
+!.gitignore
+!AVL.h
+!main.cpp
+!Makefile
+!README.md

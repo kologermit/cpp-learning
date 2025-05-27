@@ -1,7 +1,5 @@
 #include <iostream>
 #include <algorithm>
-// #include <vector>
-// #define Vector vector
 #include "Vector.h"
 using namespace std;
 struct A {

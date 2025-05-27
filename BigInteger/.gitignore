@@ -1,0 +1,7 @@
+*
+!.gitignore
+!BigInteger.cpp
+!BigInteger.h
+!main.cpp
+!Makefile
+!README.md
